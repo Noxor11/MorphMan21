@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import importlib
+
+import aqt
 from aqt import mw
 
 # retrieving the configuration using get_config is very expensive operation
@@ -20,6 +22,8 @@ def init_preferences():
     _init_config_py()
     _init_anki_json_config()
 
+    from . import stats
+    stats.init_stats_toolbar_option()
 
 def get_preference(key, model_id=None, deck_id=None):
     try:
@@ -180,11 +184,13 @@ def jcfg_default():
         'Option_EnableWebService': False,          # Experimental web service
     }
 
+
 def _jsonConfig():
     global config_data 
     if config_data is None:
         config_data = get_preferences()
     return config_data
+
 
 def _get_anki_json_config(key):
     return _jsonConfig().get(key)

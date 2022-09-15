@@ -73,22 +73,27 @@ def on_top_toolbar_did_init_links(links, toolbar):
         )
     )
 
-try:
-    from aqt import gui_hooks
-    gui_hooks.top_toolbar_did_init_links.append(on_top_toolbar_did_init_links)
-except:
-    # Support for legacy Anki before 2.1.22
-    def my_centerLinks(self, _old):
-        name, details = getStatsLink()
-        links = [
-            ["decks", _("Decks"), _("Shortcut key: %s") % "D"],
-            ["add", _("Add"), _("Shortcut key: %s") % "A"],
-            ["browse", _("Browse"), _("Shortcut key: %s") % "B"],
-            ["stats", _("Stats"), _("Shortcut key: %s") % "T"],
-            ["sync", _("Sync"), _("Shortcut key: %s") % "Y"],
-            ["morph", _(name), _(details)],
-        ]
-        return self._linkHTML(links)
-    
-    toolbar.Toolbar._centerLinks = wrap(toolbar.Toolbar._centerLinks, my_centerLinks, 'around')
 
+def init_stats_toolbar_option():
+    from aqt import gui_hooks
+    from anki import hooks
+    try:
+        mw.toolbar = toolbar.Toolbar(mw, mw.toolbarWeb)
+        gui_hooks.top_toolbar_did_init_links.append(on_top_toolbar_did_init_links)
+        mw.toolbar.draw()
+
+    except:
+        # Support for legacy Anki before 2.1.22
+        def my_centerLinks(self, _old):
+            name, details = getStatsLink()
+            links = [
+                ["decks", _("Decks"), _("Shortcut key: %s") % "D"],
+                ["add", _("Add"), _("Shortcut key: %s") % "A"],
+                ["browse", _("Browse"), _("Shortcut key: %s") % "B"],
+                ["stats", _("Stats"), _("Shortcut key: %s") % "T"],
+                ["sync", _("Sync"), _("Shortcut key: %s") % "Y"],
+                ["morph", _(name), _(details)],
+            ]
+            return self._linkHTML(links)
+
+        mw.toolbar.Toolbar._centerLinks = hooks.wrap(mw.toolbar.Toolbar._centerLinks, my_centerLinks, 'around')
