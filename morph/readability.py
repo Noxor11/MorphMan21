@@ -29,7 +29,7 @@ from .morphemes import Morpheme, MorphDb, getMorphemes, altIncludesMorpheme
 from .morphemizer import getAllMorphemizers
 from .preferences import get_preference as cfg, update_preferences
 from .util import mw
-from anki.utils import stripHTML
+from anki.utils import strip_html
 
 from . import customTableWidget
 from . import readability_ui
@@ -104,7 +104,7 @@ def getPath(le, caption, open_directory=False):  # LineEdit -> GUI ()
     try:
         if open_directory:
             path = QFileDialog.getExistingDirectory(caption=caption, directory=start_path,
-                                                    options=QFileDialog.ShowDirsOnly)
+                                                    options=QFileDialog.Option.ShowDirsOnly)
         else:
             path = QFileDialog.getOpenFileName(caption=caption, directory=start_path)[0]
     except:
@@ -271,7 +271,7 @@ class LocationCorpusDB:
 class TableInteger(QTableWidgetItem):
     def __init__(self, value):
         super(TableInteger, self).__init__(str(int(value)))
-        self.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        self.setTextAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
 
     def __lt__(self, other):
         lvalue = self.text()
@@ -281,7 +281,7 @@ class TableInteger(QTableWidgetItem):
 class TableFloat(QTableWidgetItem):
     def __init__(self, value):
         super(TableFloat, self).__init__('%0.03f' % value)
-        self.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        self.setTextAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
 
     def __lt__(self, other):
         lvalue = self.text()
@@ -291,7 +291,7 @@ class TableFloat(QTableWidgetItem):
 class TablePercent(QTableWidgetItem):
     def __init__(self, value):
         super(TablePercent, self).__init__('%0.02f' % value)
-        self.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        self.setTextAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
 
     def __lt__(self, other):
         lvalue = self.text()
@@ -510,7 +510,7 @@ class AnalyzerDialog(QDialog):
                 result['result'] = 'success'
             elif msg['type'] == "is-target-sentence":
                 morphemizer = self.morphemizer()
-                morphs = getMorphemes(morphemizer, stripHTML(msg['sentence']))
+                morphs = getMorphemes(morphemizer, strip_html(msg['sentence']))
                 is_target = False
 
                 for m in morphs:
@@ -568,11 +568,11 @@ class AnalyzerDialog(QDialog):
         self.ui.outputText.clear()
 
     def writeOutput(self, m):
-        self.ui.outputText.moveCursor(QTextCursor.End)
+        self.ui.outputText.moveCursor(QTextCursor.MoveOperation.End)
         self.ui.outputText.insertPlainText(m)
 
     def write(self, txt):
-        self.ui.outputText.moveCursor(QTextCursor.End)
+        self.ui.outputText.moveCursor(QTextCursor.MoveOperation.End)
         self.ui.outputText.insertPlainText(txt)
 
     def flush(self):
@@ -969,7 +969,7 @@ class AnalyzerDialog(QDialog):
                 srt_count = 0
 
                 def parse_text(loc_corpus, text):
-                    text = stripHTML(text)
+                    text = strip_html(text)
                     parsed_morphs = getMorphemes(morphemizer, text)
                     if len(parsed_morphs) == 0:
                         return
